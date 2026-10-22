@@ -1,20 +1,20 @@
+import { auth } from "@crm/auth/auth";
 import {
-	auth,
+	GOOGLE_PROVIDER_ID,
 	type MailboxProviderId,
 	parseScopes,
 	type SignInAccount,
-} from "@crm/auth";
+} from "@crm/auth/scopes";
 import { type Db } from "@crm/db";
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectDatabase } from "../database/database.constants";
 import {
-	GOOGLE_PROVIDER_ID,
 	PROVIDER_FOR_SOURCE,
 	SCOPE_FOR_SOURCE,
 	type SyncSource,
 } from "./mailbox.constants";
 
-export type TokenFailure =
+type TokenFailure =
 	| { outcome: "needs-reconnect"; reason: string }
 	| { outcome: "not-connected"; reason: string };
 
