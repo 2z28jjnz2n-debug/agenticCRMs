@@ -1,4 +1,5 @@
 import { EnrichmentStatus } from "@crm/db";
+import { DIRECT_KINDS } from "@crm/db/agent-tasks";
 import { fieldBackfillPayload } from "@crm/validation/field-backfill";
 import { APP_AUTH, type AppAuth } from "./app-auth";
 import { brandOutcome, runBrand } from "./brand";
@@ -6,18 +7,13 @@ import { queueEventAgentRuns } from "./custom-agent-dispatch";
 import { settledWithin } from "./deadline";
 import { DISPATCH } from "./dispatch-config";
 import { markRunning, settle } from "./enrichment";
+import { runMcpToolDiscovery } from "./mcp-discovery";
 import { collapsing, runLimited } from "./pool";
 import { runPortrait } from "./portrait";
 import { runSlackChannelJoin } from "./slack-join-task";
 import { runSlackPeopleMatch } from "./slack-people";
 import { staleTaskSweep } from "./stale-tasks";
-import {
-	claimDue,
-	completeTask,
-	DIRECT_KINDS,
-	type LeasedTask,
-	noteSession,
-} from "./tasks";
+import { claimDue, completeTask, type LeasedTask, noteSession } from "./tasks";
 
 export const VISIBLE_BATCH = DISPATCH.visible.batch;
 export const VISIBLE_CONCURRENCY = DISPATCH.visible.concurrency;
@@ -125,6 +121,11 @@ async function handleDirect(task: LeasedTask): Promise<void> {
 				? "Queued 1 matching agent run."
 				: `Queued ${queued} matching agent runs.`,
 		);
+		return;
+	}
+
+	if (task.kind === "mcp-tool-discovery") {
+		await completeTask(task.id, await runMcpToolDiscovery(task.payload));
 		return;
 	}
 
