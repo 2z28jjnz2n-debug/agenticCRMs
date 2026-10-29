@@ -32,7 +32,7 @@ import {
 const socialProviders: NonNullable<BetterAuthOptions["socialProviders"]> = {};
 const slackOAuth = env.slack;
 const slackRedirectUri = new URL(
-	"/api/auth/oauth2/callback/slack",
+	"/api/auth/callback/slack",
 	env.apiUrl,
 ).toString();
 
@@ -133,6 +133,7 @@ export const auth = betterAuth({
 								clientId: slackOAuth.clientId,
 								clientSecret: slackOAuth.clientSecret,
 								disableSignUp: true,
+								pkce: false,
 								redirectURI: slackRedirectUri,
 								scopes: [...SLACK_REQUESTED_SCOPES],
 								authorizationUrlParams: {

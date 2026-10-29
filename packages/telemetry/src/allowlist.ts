@@ -122,6 +122,7 @@ export const AGENT_TOOLS = [
 	"get_contact_work_history",
 	"get_linkedin_profile",
 	"identify_contact",
+	"inspect_connections",
 	"list_deals",
 	"list_fields",
 	"list_outstanding_work",

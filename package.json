@@ -43,11 +43,21 @@
 		}
 	},
 	"overrides": {
-		"@better-auth/core": "1.6.33",
+		"@better-auth/core": "1.7.14",
 		"@nestjs/swagger>js-yaml": "5.4.2",
 		"auth>@mrleebo/prisma-ast": "0.16.0",
-		"eve>undici": "8.10.2",
-		"guarded-fetch>undici": "7.30.1"
+		"eve>undici": "8.12.3",
+		"guarded-fetch>undici": "7.30.1",
+		"@ai-sdk/provider-utils>undici": "7.30.1",
+		"@vercel/blob>undici": "6.29.1",
+		"@hono/node-server": "2.1.5",
+		"body-parser": "2.4.0",
+		"dompurify": "3.4.17",
+		"fast-uri": "3.1.9",
+		"ip-address": "10.7.5",
+		"multer": "2.5.0",
+		"qs": "6.16.2",
+		"@vercel/cli-config>zod": "4.6.7"
 	},
 	"catalog": {
 		"vite-plus": "1.3.0"
