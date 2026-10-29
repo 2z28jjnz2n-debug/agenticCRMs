@@ -3,9 +3,9 @@
 import ArrowRight from "@carbon/icons-react/es/ArrowRight";
 import { Icon } from "@crm/ui/components/icon";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { adoptChatUrl } from "@/lib/chat-route";
 import { useTRPC } from "@/lib/trpc/client";
 import { useWorkspaceUrl } from "@/lib/use-workspace-url";
 import { AgentComposer, type BuilderComposerPrompt } from "./agent-composer";
@@ -17,6 +17,7 @@ const SUGGESTIONS = [
 ];
 
 export function AgentBuilderHome({ name }: { name: string }) {
+	const router = useRouter();
 	const workspaceUrl = useWorkspaceUrl();
 	const trpc = useTRPC();
 	const queryClient = useQueryClient();
@@ -27,7 +28,7 @@ export function AgentBuilderHome({ name }: { name: string }) {
 				await queryClient.invalidateQueries({
 					queryKey: trpc.conversations.builderList.pathKey(),
 				});
-				adoptChatUrl(window.history, workspaceUrl(`/chat/${id}`));
+				router.replace(workspaceUrl(`/chat/${id}`), { scroll: false });
 			},
 			onError: (error) => toast.error(error.message),
 		}),

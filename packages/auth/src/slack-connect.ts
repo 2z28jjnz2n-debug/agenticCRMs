@@ -18,11 +18,26 @@ const CONNECT_MANAGER_ROLES = WORKSPACE_ROLES.filter((role) =>
 	canManageConnections(role),
 );
 
-const SLACK_CONNECT_START_PATHS = ["/oauth2/link", "/sign-in/oauth2"];
-const OAUTH_CALLBACK_PATH = "/oauth2/callback";
+const SLACK_CONNECT_START_PATHS = [
+	"/oauth2/link",
+	"/sign-in/oauth2",
+	"/link-social",
+	"/sign-in/social",
+];
+const OAUTH_CALLBACK_PATHS = ["/oauth2/callback", "/callback"];
 
-const connectStartBody = z.object({ providerId: z.string() });
-const callbackParams = z.object({ providerId: z.string() });
+const connectStartBody = z.union([
+	z.object({ provider: z.string() }),
+	z
+		.object({ providerId: z.string() })
+		.transform(({ providerId }) => ({ provider: providerId })),
+]);
+const callbackParams = z.union([
+	z.object({ id: z.string() }),
+	z
+		.object({ providerId: z.string() })
+		.transform(({ providerId }) => ({ id: providerId })),
+]);
 
 export const slackConnectGuard = createAuthMiddleware(async (ctx) => {
 	const guarded =
@@ -68,14 +83,15 @@ function startsSlackConnect(
 ): boolean {
 	if (!SLACK_CONNECT_START_PATHS.includes(path)) return false;
 	const parsed = connectStartBody.safeParse(body);
-	return parsed.success && parsed.data.providerId === SLACK_PROVIDER_ID;
+	return parsed.success && parsed.data.provider === SLACK_PROVIDER_ID;
 }
 
 function completesSlackConnect(
 	path: string,
 	params: JsonValue | undefined,
 ): boolean {
-	if (!path.startsWith(OAUTH_CALLBACK_PATH)) return false;
+	if (!OAUTH_CALLBACK_PATHS.some((prefix) => path.startsWith(prefix)))
+		return false;
 	const parsed = callbackParams.safeParse(params);
-	return parsed.success && parsed.data.providerId === SLACK_PROVIDER_ID;
+	return parsed.success && parsed.data.id === SLACK_PROVIDER_ID;
 }

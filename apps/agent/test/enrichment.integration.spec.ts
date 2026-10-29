@@ -42,8 +42,10 @@ function subjectOf(ids: { contactId?: string; companyId?: string }) {
 }
 
 async function retiredTask(companyId: string) {
-	const row = await db.company.findUniqueOrThrow({
+	const finishedAt = new Date(Date.now() - 1_000);
+	const row = await db.company.update({
 		where: { id: companyId },
+		data: { updatedAt: new Date(finishedAt.getTime() - 1) },
 		select: { updatedAt: true },
 	});
 
@@ -54,7 +56,7 @@ async function retiredTask(companyId: string) {
 			reason: "lifecycle",
 			attempts: 3,
 			dueAt: row.updatedAt,
-			finishedAt: new Date(row.updatedAt.getTime() + 1),
+			finishedAt,
 		},
 		select: { id: true },
 	});

@@ -82,6 +82,7 @@ const authorizationCompleted = z.object({
 type ToolVerbs = Record<string, string>;
 
 const VERBS: ToolVerbs = {
+	inspect_connections: "Checked connected email, calendar and services",
 	read_crm_history: "Read our emails and meetings with them",
 	read_company_history: "Read everything we have on the company",
 	read_deal_history: "Read the deal and where it has been",

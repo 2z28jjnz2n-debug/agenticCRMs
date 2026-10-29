@@ -24,6 +24,21 @@ records and integrations" with ids shaped `google:calendar`, `google:gmail`.
 A new integration becomes taggable by extending that enum's id space, not by
 building a second authoring surface.
 
+## Google in private chat
+
+Native Google connections do not appear in the MCP platform catalogue.
+Private chat receives the owner's verified connection status on each turn.
+`inspect_connections` checks the same status when the agent needs fresh evidence.
+It returns no credentials.
+
+Google access is read-only. CRM history tools read imported email and meetings
+for matched CRM records. They do not search the live inbox or the whole calendar.
+Gmail starts watching new messages when connected. It does not import old mail.
+An empty import does not mean the connection is missing.
+
+A reviewed team agent can create CRM tasks from its permitted history.
+The app cannot send email, write Google Calendar events, or create Google Tasks.
+
 If you find yourself adding a toggle, a trigger builder, or an "Edit automation"
 form to a settings page, stop — that work belongs in the builder.
 
@@ -45,14 +60,14 @@ undo it.
 Connecting is the same decision as disconnecting, because `replaceSlackConnection`
 deletes every other Slack account row: a second person connecting *replaces* the
 workspace's Slack, and every deployed agent then reads from and posts to whichever
-Slack they installed. Hiding the button is not enough — `authClient.oauth2.link`
+Slack they installed. Hiding the button is not enough — `authClient.linkSocial`
 is one POST.
 
 `slackConnectGuard` (`packages/auth/src/slack-connect.ts`) is Better Auth's
 `hooks.before`, and it asks the same `canManageConnections` the API does. It
-covers all three doors: `/oauth2/link`, `/sign-in/oauth2` (Slack is a connection,
+covers all three doors: `/link-social`, `/sign-in/social` (Slack is a connection,
 never a sign-in method, and that endpoint needs no session) and
-`/oauth2/callback/slack`. The callback is the one that matters — refusing there
+`/callback/slack`. The callback is the one that matters — refusing there
 happens **before the code is exchanged**, so a refused attempt writes no
 `SlackWorkspaceGrant` user token and deletes no bot token. Google and Microsoft
 sign in on different paths and never reach the guard.
